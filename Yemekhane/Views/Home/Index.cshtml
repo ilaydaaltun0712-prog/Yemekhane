@@ -1,0 +1,32 @@
+﻿@{
+ViewData["Title"] = "Yemekhane";
+}
+
+<div class="text-center mb-5">
+    <h1 class="display-5">Yemekhane Sistemi</h1>
+    <p class="text-muted">Devam etmek için bir seçenek seçin.</p>
+</div>
+
+<div class="row justify-content-center g-4">
+    <div class="col-md-5">
+        <a asp-controller="Menu" asp-action="Liste" class="text-decoration-none">
+            <div class="card shadow-sm h-100 text-center p-4">
+                <div class="card-body">
+                    <h2 class="card-title">Menü Listesi</h2>
+                    <p class="card-text text-muted">Haftalık yemek menüsünü görüntüleyin.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-5">
+        <a asp-controller="Account" asp-action="Login" class="text-decoration-none">
+            <div class="card shadow-sm h-100 text-center p-4">
+                <div class="card-body">
+                    <h2 class="card-title">Main Girişi</h2>
+                    <p class="card-text text-muted">Yönetici girişi için tıklayın.</p>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>

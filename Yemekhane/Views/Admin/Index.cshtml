@@ -1,0 +1,39 @@
+@model List<Yemekhane.Models.GunMenu>
+@{
+    ViewData["Title"] = "Admin Paneli";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-0">Menü Yönetimi</h1>
+        <small class="text-muted">Hoş geldin, @User.Identity?.Name</small>
+    </div>
+    <form method="post" asp-controller="Account" asp-action="Logout">
+        <button type="submit" class="btn btn-outline-danger">Çıkış Yap</button>
+    </form>
+</div>
+
+@if (TempData["Mesaj"] != null)
+{
+    <div class="alert alert-success">@TempData["Mesaj"]</div>
+}
+
+<form method="post" asp-action="Kaydet">
+    <div class="row g-3">
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header fw-bold">@Model[i].Gun</div>
+                    <div class="card-body">
+                        <input type="hidden" name="menuler[@i].Id" value="@Model[i].Id" />
+                        <textarea name="menuler[@i].Icerik" class="form-control" rows="6"
+                                  placeholder="Her yemeği ayrı satıra yazın">@Model[i].Icerik</textarea>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <button type="submit" class="btn btn-success btn-lg mt-4">Kaydet</button>
+</form>

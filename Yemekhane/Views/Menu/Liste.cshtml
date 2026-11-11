@@ -1,0 +1,26 @@
+@model List<Yemekhane.Models.GunMenu>
+@{
+    ViewData["Title"] = "Menü Listesi";
+}
+
+<h1 class="mb-4">Haftalık Menü</h1>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th style="width: 20%">Gün</th>
+            <th>Menü</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var gun in Model)
+        {
+            <tr>
+                <td><strong>@gun.Gun</strong></td>
+                <td style="white-space: pre-line">@(string.IsNullOrWhiteSpace(gun.Icerik) ? "Menü henüz girilmedi" : gun.Icerik)</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
