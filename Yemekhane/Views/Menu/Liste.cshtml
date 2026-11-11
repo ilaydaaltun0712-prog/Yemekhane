@@ -1,4 +1,4 @@
-@model List<Yemekhane.Models.GunMenu>
+@model List<Yemekhane.Models.Gun>
 @{
     ViewData["Title"] = "Menü Listesi";
 }
@@ -17,8 +17,22 @@
         @foreach (var gun in Model)
         {
             <tr>
-                <td><strong>@gun.Gun</strong></td>
-                <td style="white-space: pre-line">@(string.IsNullOrWhiteSpace(gun.Icerik) ? "Menü henüz girilmedi" : gun.Icerik)</td>
+                <td><strong>@gun.Ad</strong></td>
+                <td>
+                    @if (gun.GunYemekleri.Any())
+                    {
+                        <ul class="list-unstyled mb-0">
+                            @foreach (var gy in gun.GunYemekleri.OrderBy(x => x.Id))
+                            {
+                                <li>@gy.Yemek.Ad</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Menü henüz girilmedi</span>
+                    }
+                </td>
             </tr>
         }
         </tbody>

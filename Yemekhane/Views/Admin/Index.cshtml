@@ -1,4 +1,4 @@
-@model List<Yemekhane.Models.GunMenu>
+@model List<Yemekhane.Models.GunFormu>
 @{
     ViewData["Title"] = "Admin Paneli";
 }
@@ -24,11 +24,11 @@
         {
             <div class="col-md-6 col-lg-4">
                 <div class="card h-100 shadow-sm">
-                    <div class="card-header fw-bold">@Model[i].Gun</div>
+                    <div class="card-header fw-bold">@Model[i].GunAdi</div>
                     <div class="card-body">
-                        <input type="hidden" name="menuler[@i].Id" value="@Model[i].Id" />
-                        <textarea name="menuler[@i].Icerik" class="form-control" rows="6"
-                                  placeholder="Her yemeği ayrı satıra yazın">@Model[i].Icerik</textarea>
+                        <input type="hidden" name="menuler[@i].GunId" value="@Model[i].GunId" />
+                        <textarea name="menuler[@i].Yemekler" class="form-control" rows="6"
+                                  placeholder="Her yemeği ayrı satıra yazın">@Model[i].Yemekler</textarea>
                     </div>
                 </div>
             </div>

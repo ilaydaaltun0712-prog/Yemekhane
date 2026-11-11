@@ -15,7 +15,12 @@ public class MenuController : Controller
 
     public async Task<IActionResult> Liste()
     {
-        var menuler = await _context.Menus.OrderBy(m => m.Id).ToListAsync();
-        return View(menuler);
+        var gunler = await _context.Gunler
+            .Include(g => g.GunYemekleri)
+            .ThenInclude(gy => gy.Yemek)
+            .OrderBy(g => g.Id)
+            .ToListAsync();
+
+        return View(gunler);
     }
 }

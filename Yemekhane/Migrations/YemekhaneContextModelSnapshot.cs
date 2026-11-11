@@ -21,7 +21,7 @@ namespace Yemekhane.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Yemekhane.Models.GunMenu", b =>
+            modelBuilder.Entity("Yemekhane.Models.Gun", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,49 +29,65 @@ namespace Yemekhane.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Gun")
+                    b.Property<string>("Ad")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Icerik")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Menus");
+                    b.ToTable("Gunler");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            Gun = "Pazartesi",
-                            Icerik = ""
+                            Ad = "Pazartesi"
                         },
                         new
                         {
                             Id = 2,
-                            Gun = "Salı",
-                            Icerik = ""
+                            Ad = "Salı"
                         },
                         new
                         {
                             Id = 3,
-                            Gun = "Çarşamba",
-                            Icerik = ""
+                            Ad = "Çarşamba"
                         },
                         new
                         {
                             Id = 4,
-                            Gun = "Perşembe",
-                            Icerik = ""
+                            Ad = "Perşembe"
                         },
                         new
                         {
                             Id = 5,
-                            Gun = "Cuma",
-                            Icerik = ""
+                            Ad = "Cuma"
                         });
+                });
+
+            modelBuilder.Entity("Yemekhane.Models.GunYemek", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("GunId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("YemekId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("YemekId");
+
+                    b.HasIndex("GunId", "YemekId")
+                        .IsUnique();
+
+                    b.ToTable("GunYemekleri");
                 });
 
             modelBuilder.Entity("Yemekhane.Models.Kullanici", b =>
@@ -93,6 +109,56 @@ namespace Yemekhane.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Yemekhane.Models.Yemek", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Ad")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Ad")
+                        .IsUnique();
+
+                    b.ToTable("Yemekler");
+                });
+
+            modelBuilder.Entity("Yemekhane.Models.GunYemek", b =>
+                {
+                    b.HasOne("Yemekhane.Models.Gun", "Gun")
+                        .WithMany("GunYemekleri")
+                        .HasForeignKey("GunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Yemekhane.Models.Yemek", "Yemek")
+                        .WithMany("GunYemekleri")
+                        .HasForeignKey("YemekId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gun");
+
+                    b.Navigation("Yemek");
+                });
+
+            modelBuilder.Entity("Yemekhane.Models.Gun", b =>
+                {
+                    b.Navigation("GunYemekleri");
+                });
+
+            modelBuilder.Entity("Yemekhane.Models.Yemek", b =>
+                {
+                    b.Navigation("GunYemekleri");
                 });
 #pragma warning restore 612, 618
         }

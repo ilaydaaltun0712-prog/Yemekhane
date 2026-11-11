@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,23 +20,63 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var menuler = await _context.Menus.OrderBy(m => m.Id).ToListAsync();
-        return View(menuler);
+        var gunler = await _context.Gunler
+            .Include(g => g.GunYemekleri)
+                .ThenInclude(gy => gy.Yemek)
+            .OrderBy(g => g.Id)
+            .ToListAsync();
+
+        var model = gunler.Select(g => new GunFormu
+        {
+            GunId = g.Id,
+            GunAdi = g.Ad,
+            Yemekler = string.Join("\n", g.GunYemekleri
+                .OrderBy(gy => gy.Id)
+                .Select(gy => gy.Yemek.Ad))
+        }).ToList();
+
+        return View(model);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Kaydet(List<GunMenu> menuler)
+    public async Task<IActionResult> Kaydet(List<GunFormu> menuler)
     {
-        foreach (var gelen in menuler)
+        var karsilastirici = StringComparer.Create(new CultureInfo("tr-TR"), true);
+
+        foreach (var form in menuler)
         {
-            var kayit = await _context.Menus.FindAsync(gelen.Id);
-            if (kayit != null)
+            var gun = await _context.Gunler
+                .Include(g => g.GunYemekleri)
+                .FirstOrDefaultAsync(g => g.Id == form.GunId);
+
+            if (gun == null) continue;
+
+            // 1. Günün eski bağlantılarını sil
+            _context.GunYemekleri.RemoveRange(gun.GunYemekleri);
+            await _context.SaveChangesAsync();
+
+            // 2. Kutudaki satırları yemek adlarına ayır
+            var adlar = (form.Yemekler ?? "")
+                .Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(a => a.Length > 100 ? a[..100] : a)
+                .Distinct(karsilastirici);
+
+            // 3. Her yemeği bul (yoksa ekle) ve güne bağla
+            foreach (var ad in adlar)
             {
-                kayit.Icerik = gelen.Icerik ?? "";
+                var yemek = await _context.Yemekler.FirstOrDefaultAsync(y => y.Ad == ad);
+                if (yemek == null)
+                {
+                    yemek = new Yemek { Ad = ad };
+                    _context.Yemekler.Add(yemek);
+                }
+
+                _context.GunYemekleri.Add(new GunYemek { Gun = gun, Yemek = yemek });
             }
+
+            await _context.SaveChangesAsync();
         }
 
-        await _context.SaveChangesAsync();
         TempData["Mesaj"] = "Menü kaydedildi.";
         return RedirectToAction("Index");
     }
